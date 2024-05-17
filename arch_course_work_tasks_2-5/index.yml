@@ -1,0 +1,1004 @@
+openapi: 3.1.0
+info:
+  title: CourseWork
+  version: 0.1.0
+paths:
+  /auth/jwt/login:
+    post:
+      tags:
+        - auth
+      summary: 'Auth:Jwt.Login'
+      operationId: auth_jwt_login_auth_jwt_login_post
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Body_auth_jwt_login_auth_jwt_login_post'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BearerResponse'
+              example:
+                access_token: >-
+                  eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiOTIyMWZmYzktNjQwZi00MzcyLTg2ZDMtY2U2NDJjYmE1NjAzIiwiYXVkIjoiZmFzdGFwaS11c2VyczphdXRoIiwiZXhwIjoxNTcxNTA0MTkzfQ.M10bjOe45I5Ncu_uXvOmVV8QxnL-nZfcH96U90JaocI
+                token_type: bearer
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+              examples:
+                LOGIN_BAD_CREDENTIALS:
+                  summary: Bad credentials or the user is inactive.
+                  value:
+                    detail: LOGIN_BAD_CREDENTIALS
+                LOGIN_USER_NOT_VERIFIED:
+                  summary: The user is not verified.
+                  value:
+                    detail: LOGIN_USER_NOT_VERIFIED
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /auth/jwt/logout:
+    post:
+      tags:
+        - auth
+      summary: 'Auth:Jwt.Logout'
+      operationId: auth_jwt_logout_auth_jwt_logout_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '401':
+          description: Missing token or inactive user.
+      security:
+        - OAuth2PasswordBearer: []
+  /auth/register:
+    post:
+      tags:
+        - auth
+      summary: 'Register:Register'
+      operationId: register_register_auth_register_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+        required: true
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRead'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+              examples:
+                REGISTER_USER_ALREADY_EXISTS:
+                  summary: A user with this email already exists.
+                  value:
+                    detail: REGISTER_USER_ALREADY_EXISTS
+                REGISTER_INVALID_PASSWORD:
+                  summary: Password validation failed.
+                  value:
+                    detail:
+                      code: REGISTER_INVALID_PASSWORD
+                      reason: Password should beat least 3 characters
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /auth/forgot-password:
+    post:
+      tags:
+        - auth
+      summary: 'Reset:Forgot Password'
+      operationId: reset_forgot_password_auth_forgot_password_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: >-
+                #/components/schemas/Body_reset_forgot_password_auth_forgot_password_post
+        required: true
+      responses:
+        '202':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /auth/reset-password:
+    post:
+      tags:
+        - auth
+      summary: 'Reset:Reset Password'
+      operationId: reset_reset_password_auth_reset_password_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: >-
+                #/components/schemas/Body_reset_reset_password_auth_reset_password_post
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+              examples:
+                RESET_PASSWORD_BAD_TOKEN:
+                  summary: Bad or expired token.
+                  value:
+                    detail: RESET_PASSWORD_BAD_TOKEN
+                RESET_PASSWORD_INVALID_PASSWORD:
+                  summary: Password validation failed.
+                  value:
+                    detail:
+                      code: RESET_PASSWORD_INVALID_PASSWORD
+                      reason: Password should be at least 3 characters
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /auth/request-verify-token:
+    post:
+      tags:
+        - auth
+      summary: 'Verify:Request-Token'
+      operationId: verify_request_token_auth_request_verify_token_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: >-
+                #/components/schemas/Body_verify_request_token_auth_request_verify_token_post
+        required: true
+      responses:
+        '202':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /auth/verify:
+    post:
+      tags:
+        - auth
+      summary: 'Verify:Verify'
+      operationId: verify_verify_auth_verify_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Body_verify_verify_auth_verify_post'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRead'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+              examples:
+                VERIFY_USER_BAD_TOKEN:
+                  summary: >-
+                    Bad token, not existing user ornot the e-mail currently set
+                    for the user.
+                  value:
+                    detail: VERIFY_USER_BAD_TOKEN
+                VERIFY_USER_ALREADY_VERIFIED:
+                  summary: The user is already verified.
+                  value:
+                    detail: VERIFY_USER_ALREADY_VERIFIED
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /users/me:
+    get:
+      tags:
+        - users
+      summary: 'Users:Current User'
+      operationId: users_current_user_users_me_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRead'
+        '401':
+          description: Missing token or inactive user.
+      security:
+        - OAuth2PasswordBearer: []
+    patch:
+      tags:
+        - users
+      summary: 'Users:Patch Current User'
+      operationId: users_patch_current_user_users_me_patch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRead'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+              examples:
+                UPDATE_USER_EMAIL_ALREADY_EXISTS:
+                  summary: A user with this email already exists.
+                  value:
+                    detail: UPDATE_USER_EMAIL_ALREADY_EXISTS
+                UPDATE_USER_INVALID_PASSWORD:
+                  summary: Password validation failed.
+                  value:
+                    detail:
+                      code: UPDATE_USER_INVALID_PASSWORD
+                      reason: Password should beat least 3 characters
+        '401':
+          description: Missing token or inactive user.
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+        - OAuth2PasswordBearer: []
+  '/users/{id}':
+    get:
+      tags:
+        - users
+      summary: 'Users:User'
+      operationId: users_user_users__id__get
+      security:
+        - OAuth2PasswordBearer: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            title: Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRead'
+        '401':
+          description: Missing token or inactive user.
+        '403':
+          description: Not a superuser.
+        '404':
+          description: The user does not exist.
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+        - users
+      summary: 'Users:Patch User'
+      operationId: users_patch_user_users__id__patch
+      security:
+        - OAuth2PasswordBearer: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRead'
+        '400':
+          content:
+            application/json:
+              examples:
+                UPDATE_USER_EMAIL_ALREADY_EXISTS:
+                  summary: A user with this email already exists.
+                  value:
+                    detail: UPDATE_USER_EMAIL_ALREADY_EXISTS
+                UPDATE_USER_INVALID_PASSWORD:
+                  summary: Password validation failed.
+                  value:
+                    detail:
+                      code: UPDATE_USER_INVALID_PASSWORD
+                      reason: Password should beat least 3 characters
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+          description: Bad Request
+        '401':
+          description: Missing token or inactive user.
+        '403':
+          description: Not a superuser.
+        '404':
+          description: The user does not exist.
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+        - users
+      summary: 'Users:Delete User'
+      operationId: users_delete_user_users__id__delete
+      security:
+        - OAuth2PasswordBearer: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            title: Id
+      responses:
+        '204':
+          description: Successful Response
+        '401':
+          description: Missing token or inactive user.
+        '403':
+          description: Not a superuser.
+        '404':
+          description: The user does not exist.
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  '/users/{name}/{last_name}':
+    get:
+      tags:
+        - users
+      summary: Get User By Name And Last Name
+      operationId: get_user_by_name_and_last_name_users__name___last_name__get
+      security:
+        - OAuth2PasswordBearer: []
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+            title: Name
+        - name: last_name
+          in: path
+          required: true
+          schema:
+            type: string
+            title: Last Name
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRead'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /users/:
+    get:
+      tags:
+        - users
+      summary: Get User By Name And Last Name
+      operationId: get_user_by_name_and_last_name_users__get
+      security:
+        - OAuth2PasswordBearer: []
+      parameters:
+        - name: email
+          in: query
+          required: true
+          schema:
+            type: string
+            title: Email
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRead'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  '/ptp_chat/send_message/{user_getter_id}':
+    post:
+      tags:
+        - ptp_chat
+      summary: Send Message
+      operationId: send_message_ptp_chat_send_message__user_getter_id__post
+      security:
+        - OAuth2PasswordBearer: []
+      parameters:
+        - name: user_getter_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            title: User Getter Id
+        - name: message_text
+          in: query
+          required: true
+          schema:
+            type: string
+            title: Message Text
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /ptp_chat/get_messages:
+    get:
+      tags:
+        - ptp_chat
+      summary: Get Messages
+      operationId: get_messages_ptp_chat_get_messages_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/PtpChatSchema'
+                type: array
+                title: Response Get Messages Ptp Chat Get Messages Get
+      security:
+        - OAuth2PasswordBearer: []
+  /group_chat/create:
+    post:
+      tags:
+        - group_chat
+      summary: Create Group
+      operationId: create_group_group_chat_create_post
+      security:
+        - OAuth2PasswordBearer: []
+      parameters:
+        - name: group_name
+          in: query
+          required: true
+          schema:
+            type: string
+            title: Group Name
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupChatSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  '/group_chat/add_member/{group_id}/{user_id}':
+    post:
+      tags:
+        - group_chat
+      summary: Add Member To Group
+      operationId: add_member_to_group_group_chat_add_member__group_id___user_id__post
+      security:
+        - OAuth2PasswordBearer: []
+      parameters:
+        - name: group_id
+          in: path
+          required: true
+          schema:
+            type: string
+            title: Group Id
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            title: User Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupChatSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  '/group_chat/send_message/{group_id}':
+    post:
+      tags:
+        - group_chat
+      summary: Send Message
+      operationId: send_message_group_chat_send_message__group_id__post
+      security:
+        - OAuth2PasswordBearer: []
+      parameters:
+        - name: group_id
+          in: path
+          required: true
+          schema:
+            type: string
+            title: Group Id
+        - name: message_text
+          in: query
+          required: true
+          schema:
+            type: string
+            title: Message Text
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  '/group_chat/{group_id}':
+    get:
+      tags:
+        - group_chat
+      summary: Get Group
+      operationId: get_group_group_chat__group_id__get
+      security:
+        - OAuth2PasswordBearer: []
+      parameters:
+        - name: group_id
+          in: path
+          required: true
+          schema:
+            type: string
+            title: Group Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupChatSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /fixtures/:
+    post:
+      tags:
+        - fixtures
+      summary: Add Fixtures
+      operationId: add_fixtures_fixtures__post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+components:
+  schemas:
+    BearerResponse:
+      properties:
+        access_token:
+          type: string
+          title: Access Token
+        token_type:
+          type: string
+          title: Token Type
+      type: object
+      required:
+        - access_token
+        - token_type
+      title: BearerResponse
+    Body_auth_jwt_login_auth_jwt_login_post:
+      properties:
+        grant_type:
+          anyOf:
+            - type: string
+              pattern: password
+            - type: 'null'
+          title: Grant Type
+        username:
+          type: string
+          title: Username
+        password:
+          type: string
+          title: Password
+        scope:
+          type: string
+          title: Scope
+          default: ''
+        client_id:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Client Id
+        client_secret:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Client Secret
+      type: object
+      required:
+        - username
+        - password
+      title: Body_auth_jwt_login_auth_jwt_login_post
+    Body_reset_forgot_password_auth_forgot_password_post:
+      properties:
+        email:
+          type: string
+          format: email
+          title: Email
+      type: object
+      required:
+        - email
+      title: Body_reset_forgot_password_auth_forgot_password_post
+    Body_reset_reset_password_auth_reset_password_post:
+      properties:
+        token:
+          type: string
+          title: Token
+        password:
+          type: string
+          title: Password
+      type: object
+      required:
+        - token
+        - password
+      title: Body_reset_reset_password_auth_reset_password_post
+    Body_verify_request_token_auth_request_verify_token_post:
+      properties:
+        email:
+          type: string
+          format: email
+          title: Email
+      type: object
+      required:
+        - email
+      title: Body_verify_request_token_auth_request_verify_token_post
+    Body_verify_verify_auth_verify_post:
+      properties:
+        token:
+          type: string
+          title: Token
+      type: object
+      required:
+        - token
+      title: Body_verify_verify_auth_verify_post
+    ErrorModel:
+      properties:
+        detail:
+          anyOf:
+            - type: string
+            - additionalProperties:
+                type: string
+              type: object
+          title: Detail
+      type: object
+      required:
+        - detail
+      title: ErrorModel
+    GroupChatSchema:
+      properties:
+        id:
+          anyOf:
+            - type: string
+              example: 5eb7cf5a86d9755df3a6c593
+            - type: 'null'
+          title: Id
+        members:
+          anyOf:
+            - items:
+                $ref: '#/components/schemas/UserRead'
+              type: array
+            - type: 'null'
+          title: Members
+          default: []
+        messages:
+          anyOf:
+            - items:
+                $ref: '#/components/schemas/MessageSchema'
+              type: array
+            - type: 'null'
+          title: Messages
+          default: []
+        groupName:
+          type: string
+          title: Groupname
+      type: object
+      required:
+        - groupName
+      title: GroupChatSchema
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    MessageSchema:
+      properties:
+        text:
+          type: string
+          title: Text
+        user:
+          $ref: '#/components/schemas/UserRead'
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+      type: object
+      required:
+        - text
+        - user
+      title: MessageSchema
+    PtpChatSchema:
+      properties:
+        id:
+          anyOf:
+            - type: string
+              example: 5eb7cf5a86d9755df3a6c593
+            - type: 'null'
+          title: Id
+        user_sender:
+          $ref: '#/components/schemas/UserRead'
+        user_getter:
+          $ref: '#/components/schemas/UserRead'
+        messages:
+          anyOf:
+            - items:
+                $ref: '#/components/schemas/MessageSchema'
+              type: array
+            - type: 'null'
+          title: Messages
+          default: []
+      type: object
+      required:
+        - user_sender
+        - user_getter
+      title: PtpChatSchema
+    UserCreate:
+      properties:
+        email:
+          type: string
+          format: email
+          title: Email
+        password:
+          type: string
+          title: Password
+        isActive:
+          anyOf:
+            - type: boolean
+            - type: 'null'
+          title: Isactive
+          default: true
+        isSuperuser:
+          anyOf:
+            - type: boolean
+            - type: 'null'
+          title: Issuperuser
+          default: false
+        isVerified:
+          anyOf:
+            - type: boolean
+            - type: 'null'
+          title: Isverified
+          default: false
+        name:
+          type: string
+          title: Name
+        lastName:
+          type: string
+          title: Lastname
+      type: object
+      required:
+        - email
+        - password
+        - name
+        - lastName
+      title: UserCreate
+    UserRead:
+      properties:
+        id:
+          type: integer
+          title: Id
+        email:
+          type: string
+          format: email
+          title: Email
+        is_active:
+          anyOf:
+            - type: boolean
+            - type: 'null'
+          title: Is Active
+          default: true
+        is_superuser:
+          anyOf:
+            - type: boolean
+            - type: 'null'
+          title: Is Superuser
+          default: false
+        is_verified:
+          anyOf:
+            - type: boolean
+            - type: 'null'
+          title: Is Verified
+          default: false
+        name:
+          type: string
+          title: Name
+        last_name:
+          type: string
+          title: Last Name
+      type: object
+      required:
+        - id
+        - email
+        - name
+        - last_name
+      title: UserRead
+    UserUpdate:
+      properties:
+        password:
+          type: string
+          title: Password
+        email:
+          type: string
+          format: email
+          title: Email
+        is_active:
+          anyOf:
+            - type: boolean
+            - type: 'null'
+          title: Is Active
+          default: true
+        is_superuser:
+          anyOf:
+            - type: boolean
+            - type: 'null'
+          title: Is Superuser
+          default: false
+        is_verified:
+          anyOf:
+            - type: boolean
+            - type: 'null'
+          title: Is Verified
+          default: false
+        name:
+          type: string
+          title: Name
+        last_name:
+          type: string
+          title: Last Name
+      type: object
+      required:
+        - password
+        - email
+        - name
+        - last_name
+      title: UserUpdate
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+              - type: string
+              - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+        - loc
+        - msg
+        - type
+      title: ValidationError
+  securitySchemes:
+    OAuth2PasswordBearer:
+      type: oauth2
+      flows:
+        password:
+          scopes: {}
+          tokenUrl: auth/jwt/login
